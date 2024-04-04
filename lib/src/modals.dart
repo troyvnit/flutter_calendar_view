@@ -48,6 +48,9 @@ class LiveTimeIndicatorSettings {
   /// StringProvider for time string
   final StringProvider? timeStringBuilder;
 
+  /// Time string style
+  final TextStyle timeStringStyle;
+
   /// Flag to show bullet at left side or not.
   final bool showBullet;
 
@@ -63,18 +66,30 @@ class LiveTimeIndicatorSettings {
   /// Width of time backgroud view.
   final double timeBackgroundViewWidth;
 
+  /// Height of time backgroud view.
+  final double timeBackgroundViewHeight;
+
+  /// Radius of time backgroud view.
+  final double timeBackgroundViewRadius;
+
   /// Settings for live time line
-  const LiveTimeIndicatorSettings({
-    this.height = 1.0,
-    this.offset = 5.0,
-    this.color = Colors.grey,
-    this.timeStringBuilder,
-    this.showBullet = true,
-    this.showTime = false,
-    this.showTimeBackgroundView = false,
-    this.bulletRadius = 5.0,
-    this.timeBackgroundViewWidth = 60.0,
-  }) : assert(height >= 0, "Height must be greater than or equal to 0.");
+  const LiveTimeIndicatorSettings(
+      {this.height = 1.0,
+      this.offset = 5.0,
+      this.color = Colors.grey,
+      this.timeStringBuilder,
+      this.timeStringStyle = const TextStyle(
+        fontSize: 12.0,
+        color: Colors.white,
+      ),
+      this.showBullet = true,
+      this.showTime = false,
+      this.showTimeBackgroundView = false,
+      this.bulletRadius = 5.0,
+      this.timeBackgroundViewWidth = 60.0,
+      this.timeBackgroundViewHeight = 24,
+      this.timeBackgroundViewRadius = 12})
+      : assert(height >= 0, "Height must be greater than or equal to 0.");
 
   factory LiveTimeIndicatorSettings.none() => LiveTimeIndicatorSettings(
         color: Colors.transparent,

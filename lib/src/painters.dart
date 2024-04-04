@@ -266,6 +266,9 @@ class CurrentTimeLinePainter extends CustomPainter {
   /// Time string
   final String timeString;
 
+  /// Time string style
+  final TextStyle timeStringStyle;
+
   /// Flag to show time at left side or not.
   final bool showTime;
 
@@ -275,18 +278,26 @@ class CurrentTimeLinePainter extends CustomPainter {
   /// Width of time backgroud view.
   final double timeBackgroundViewWidth;
 
+  /// Height of time backgroud view.
+  final double timeBackgroundViewHeight;
+
+  /// Radius of time backgroud view.
+  final double timeBackgroundViewRadius;
+
   /// Paints a single horizontal line at [offset].
-  CurrentTimeLinePainter({
-    required this.showBullet,
-    required this.color,
-    required this.height,
-    required this.offset,
-    required this.bulletRadius,
-    required this.timeString,
-    required this.showTime,
-    required this.showTimeBackgroundView,
-    required this.timeBackgroundViewWidth,
-  });
+  CurrentTimeLinePainter(
+      {required this.showBullet,
+      required this.color,
+      required this.height,
+      required this.offset,
+      required this.bulletRadius,
+      required this.timeString,
+      required this.timeStringStyle,
+      required this.showTime,
+      required this.showTimeBackgroundView,
+      required this.timeBackgroundViewWidth,
+      required this.timeBackgroundViewHeight,
+      required this.timeBackgroundViewRadius});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -310,9 +321,9 @@ class CurrentTimeLinePainter extends CustomPainter {
             max(3, offset.dx - 68),
             offset.dy - 11,
             timeBackgroundViewWidth,
-            24,
+            timeBackgroundViewHeight,
           ),
-          Radius.circular(12),
+          Radius.circular(timeBackgroundViewRadius),
         ),
         Paint()
           ..color = color
@@ -326,10 +337,7 @@ class CurrentTimeLinePainter extends CustomPainter {
         textDirection: TextDirection.ltr,
         text: TextSpan(
           text: timeString,
-          style: TextStyle(
-            fontSize: 12.0,
-            color: showTimeBackgroundView ? Colors.white : color,
-          ),
+          style: timeStringStyle,
         ),
       )
         ..layout()

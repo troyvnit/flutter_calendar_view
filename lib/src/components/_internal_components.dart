@@ -88,21 +88,25 @@ class _LiveTimeIndicatorState extends State<LiveTimeIndicator> {
     return CustomPaint(
       size: Size(widget.width, widget.liveTimeIndicatorSettings.height),
       painter: CurrentTimeLinePainter(
-        color: widget.liveTimeIndicatorSettings.color,
-        height: widget.liveTimeIndicatorSettings.height,
-        offset: Offset(
-          widget.timeLineWidth + widget.liveTimeIndicatorSettings.offset,
-          _currentTime.getTotalMinutes * widget.heightPerMinute,
-        ),
-        timeString: timeString,
-        showBullet: widget.liveTimeIndicatorSettings.showBullet,
-        showTime: widget.liveTimeIndicatorSettings.showTime,
-        showTimeBackgroundView:
-            widget.liveTimeIndicatorSettings.showTimeBackgroundView,
-        bulletRadius: widget.liveTimeIndicatorSettings.bulletRadius,
-        timeBackgroundViewWidth:
-            widget.liveTimeIndicatorSettings.timeBackgroundViewWidth,
-      ),
+          color: widget.liveTimeIndicatorSettings.color,
+          height: widget.liveTimeIndicatorSettings.height,
+          offset: Offset(
+            widget.timeLineWidth + widget.liveTimeIndicatorSettings.offset,
+            _currentTime.getTotalMinutes * widget.heightPerMinute,
+          ),
+          timeString: timeString,
+          timeStringStyle: widget.liveTimeIndicatorSettings.timeStringStyle,
+          showBullet: widget.liveTimeIndicatorSettings.showBullet,
+          showTime: widget.liveTimeIndicatorSettings.showTime,
+          showTimeBackgroundView:
+              widget.liveTimeIndicatorSettings.showTimeBackgroundView,
+          bulletRadius: widget.liveTimeIndicatorSettings.bulletRadius,
+          timeBackgroundViewWidth:
+              widget.liveTimeIndicatorSettings.timeBackgroundViewWidth,
+          timeBackgroundViewHeight:
+              widget.liveTimeIndicatorSettings.timeBackgroundViewHeight,
+          timeBackgroundViewRadius:
+              widget.liveTimeIndicatorSettings.timeBackgroundViewRadius),
     );
   }
 }
