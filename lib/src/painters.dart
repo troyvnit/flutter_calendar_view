@@ -318,8 +318,8 @@ class CurrentTimeLinePainter extends CustomPainter {
       canvas.drawRRect(
         RRect.fromRectAndRadius(
           Rect.fromLTWH(
-            max(3, offset.dx - 68),
-            offset.dy - 11,
+            0,
+            offset.dy - (timeBackgroundViewHeight / 2 - 1),
             timeBackgroundViewWidth,
             timeBackgroundViewHeight,
           ),
