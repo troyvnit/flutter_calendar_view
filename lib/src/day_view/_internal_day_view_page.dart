@@ -118,6 +118,9 @@ class InternalDayViewPage<T extends Object?> extends StatelessWidget {
   /// Defines extra top offset
   final double? topOffset;
 
+  /// Defines extra bottom offset
+  final double? bottomOffset;
+
   /// Defines a single day page.
   const InternalDayViewPage(
       {Key? key,
@@ -152,7 +155,8 @@ class InternalDayViewPage<T extends Object?> extends StatelessWidget {
       required this.startHour,
       required this.quarterHourIndicatorSettings,
       required this.emulateVerticalOffsetBy,
-      this.topOffset})
+      this.topOffset,
+      this.bottomOffset})
       : super(key: key);
 
   @override
@@ -287,6 +291,10 @@ class InternalDayViewPage<T extends Object?> extends StatelessWidget {
                         ],
                       ),
                     ),
+                    if (bottomOffset != null)
+                      SizedBox.fromSize(
+                        size: Size.fromHeight(bottomOffset!),
+                      ),
                   ],
                 )),
           ),

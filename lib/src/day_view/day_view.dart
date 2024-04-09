@@ -220,6 +220,10 @@ class DayView<T extends Object?> extends StatefulWidget {
   /// This will be added to the height as well
   final double? topOffset;
 
+  /// Defines extra bottom offset
+  /// This will be added to the height as well
+  final double? bottomOffset;
+
   /// Main widget for day view.
   const DayView(
       {Key? key,
@@ -266,7 +270,8 @@ class DayView<T extends Object?> extends StatefulWidget {
       this.startDuration = const Duration(hours: 0),
       this.onHeaderTitleTap,
       this.emulateVerticalOffsetBy = 0,
-      this.topOffset})
+      this.topOffset,
+      this.bottomOffset})
       : assert(!(onHeaderTitleTap != null && dayTitleBuilder != null),
             "can't use [onHeaderTitleTap] & [dayTitleBuilder] simultaneously"),
         assert(timeLineOffset >= 0,
@@ -442,46 +447,46 @@ class DayViewState<T extends Object?> extends State<DayView<T>> {
                         return ValueListenableBuilder(
                           valueListenable: _scrollConfiguration,
                           builder: (_, __, ___) => InternalDayViewPage<T>(
-                            key: ValueKey(
-                                _hourHeight.toString() + date.toString()),
-                            width: _width,
-                            liveTimeIndicatorSettings:
-                                _liveTimeIndicatorSettings,
-                            timeLineBuilder: _timeLineBuilder,
-                            dayDetectorBuilder: _dayDetectorBuilder,
-                            eventTileBuilder: _eventTileBuilder,
-                            heightPerMinute: widget.heightPerMinute,
-                            hourIndicatorSettings: _hourIndicatorSettings,
-                            hourLinePainter: _hourLinePainter,
-                            date: date,
-                            onTileTap: widget.onEventTap,
-                            onDateLongPress: widget.onDateLongPress,
-                            onDateTap: widget.onDateTap,
-                            showLiveLine: widget.showLiveTimeLineInAllDays ||
-                                date.compareWithoutTime(DateTime.now()),
-                            timeLineOffset: widget.timeLineOffset,
-                            timeLineWidth: _timeLineWidth,
-                            verticalLineOffset: widget.verticalLineOffset,
-                            showVerticalLine: widget.showVerticalLine,
-                            height: _height,
-                            controller: controller,
-                            hourHeight: _hourHeight,
-                            eventArranger: _eventArranger,
-                            minuteSlotSize: widget.minuteSlotSize,
-                            scrollNotifier: _scrollConfiguration,
-                            fullDayEventBuilder: _fullDayEventBuilder,
-                            scrollController: _scrollController,
-                            showHalfHours: widget.showHalfHours,
-                            showQuarterHours: widget.showQuarterHours,
-                            halfHourIndicatorSettings:
-                                _halfHourIndicatorSettings,
-                            startHour: _startHour,
-                            quarterHourIndicatorSettings:
-                                _quarterHourIndicatorSettings,
-                            emulateVerticalOffsetBy:
-                                widget.emulateVerticalOffsetBy,
-                            topOffset: widget.topOffset,
-                          ),
+                              key: ValueKey(
+                                  _hourHeight.toString() + date.toString()),
+                              width: _width,
+                              liveTimeIndicatorSettings:
+                                  _liveTimeIndicatorSettings,
+                              timeLineBuilder: _timeLineBuilder,
+                              dayDetectorBuilder: _dayDetectorBuilder,
+                              eventTileBuilder: _eventTileBuilder,
+                              heightPerMinute: widget.heightPerMinute,
+                              hourIndicatorSettings: _hourIndicatorSettings,
+                              hourLinePainter: _hourLinePainter,
+                              date: date,
+                              onTileTap: widget.onEventTap,
+                              onDateLongPress: widget.onDateLongPress,
+                              onDateTap: widget.onDateTap,
+                              showLiveLine: widget.showLiveTimeLineInAllDays ||
+                                  date.compareWithoutTime(DateTime.now()),
+                              timeLineOffset: widget.timeLineOffset,
+                              timeLineWidth: _timeLineWidth,
+                              verticalLineOffset: widget.verticalLineOffset,
+                              showVerticalLine: widget.showVerticalLine,
+                              height: _height,
+                              controller: controller,
+                              hourHeight: _hourHeight,
+                              eventArranger: _eventArranger,
+                              minuteSlotSize: widget.minuteSlotSize,
+                              scrollNotifier: _scrollConfiguration,
+                              fullDayEventBuilder: _fullDayEventBuilder,
+                              scrollController: _scrollController,
+                              showHalfHours: widget.showHalfHours,
+                              showQuarterHours: widget.showQuarterHours,
+                              halfHourIndicatorSettings:
+                                  _halfHourIndicatorSettings,
+                              startHour: _startHour,
+                              quarterHourIndicatorSettings:
+                                  _quarterHourIndicatorSettings,
+                              emulateVerticalOffsetBy:
+                                  widget.emulateVerticalOffsetBy,
+                              topOffset: widget.topOffset,
+                              bottomOffset: widget.bottomOffset),
                         );
                       },
                     ),
