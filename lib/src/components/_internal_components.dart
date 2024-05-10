@@ -35,6 +35,8 @@ class LiveTimeIndicator extends StatefulWidget {
   /// Defines height occupied by one minute.
   final double heightPerMinute;
 
+  final double? topOffset;
+
   /// Widget to display tile line according to current time.
   const LiveTimeIndicator(
       {Key? key,
@@ -42,7 +44,8 @@ class LiveTimeIndicator extends StatefulWidget {
       required this.height,
       required this.timeLineWidth,
       required this.liveTimeIndicatorSettings,
-      required this.heightPerMinute})
+      required this.heightPerMinute,
+      this.topOffset})
       : super(key: key);
 
   @override
@@ -92,7 +95,8 @@ class _LiveTimeIndicatorState extends State<LiveTimeIndicator> {
           height: widget.liveTimeIndicatorSettings.height,
           offset: Offset(
             widget.timeLineWidth + widget.liveTimeIndicatorSettings.offset,
-            _currentTime.getTotalMinutes * widget.heightPerMinute,
+            _currentTime.getTotalMinutes * widget.heightPerMinute +
+                (widget.topOffset ?? 0),
           ),
           timeString: timeString,
           timeStringStyle: widget.liveTimeIndicatorSettings.timeStringStyle,
