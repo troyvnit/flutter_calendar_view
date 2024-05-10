@@ -96,7 +96,7 @@ class _LiveTimeIndicatorState extends State<LiveTimeIndicator> {
           offset: Offset(
             widget.timeLineWidth + widget.liveTimeIndicatorSettings.offset,
             (_currentTime.getTotalMinutes * widget.heightPerMinute) -
-                (widget.startHour * widget.heightPerMinute) -
+                (widget.startHour * 60 * widget.heightPerMinute) -
                 widget.liveTimeIndicatorSettings.topOffset,
           ),
           timeString: timeString,
