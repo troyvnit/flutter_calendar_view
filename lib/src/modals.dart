@@ -45,6 +45,9 @@ class LiveTimeIndicatorSettings {
   /// offset of time indicator.
   final double offset;
 
+  /// Top offset of time indicator.
+  final double topOffset;
+
   /// StringProvider for time string
   final StringProvider? timeStringBuilder;
 
@@ -76,6 +79,7 @@ class LiveTimeIndicatorSettings {
   const LiveTimeIndicatorSettings(
       {this.height = 1.0,
       this.offset = 5.0,
+      this.topOffset = 0.0,
       this.color = Colors.grey,
       this.timeStringBuilder,
       this.timeStringStyle = const TextStyle(
