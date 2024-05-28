@@ -4,6 +4,7 @@
 
 import 'dart:async';
 
+import 'non_working_time.dart';
 import 'package:flutter/material.dart';
 
 import '../calendar_constants.dart';
@@ -224,6 +225,10 @@ class DayView<T extends Object?> extends StatefulWidget {
   /// This will be added to the height as well
   final double? bottomOffset;
 
+  final List<NonWorkingTime> nonWorkingTimes;
+
+  final Widget? nonWorkingContainer;
+
   /// Main widget for day view.
   const DayView(
       {Key? key,
@@ -271,7 +276,9 @@ class DayView<T extends Object?> extends StatefulWidget {
       this.onHeaderTitleTap,
       this.emulateVerticalOffsetBy = 0,
       this.topOffset,
-      this.bottomOffset})
+      this.bottomOffset,
+      this.nonWorkingTimes = const [],
+      this.nonWorkingContainer})
       : assert(!(onHeaderTitleTap != null && dayTitleBuilder != null),
             "can't use [onHeaderTitleTap] & [dayTitleBuilder] simultaneously"),
         assert(timeLineOffset >= 0,
@@ -444,6 +451,10 @@ class DayViewState<T extends Object?> extends State<DayView<T>> {
                       itemBuilder: (_, index) {
                         final date = DateTime(_minDate.year, _minDate.month,
                             _minDate.day + index);
+
+                        final dateNonWorkingTimes = widget.nonWorkingTimes
+                            .where((e) => isSameDay(e.startTime, date))
+                            .toList();
                         return ValueListenableBuilder(
                           valueListenable: _scrollConfiguration,
                           builder: (_, __, ___) => InternalDayViewPage<T>(
@@ -486,7 +497,9 @@ class DayViewState<T extends Object?> extends State<DayView<T>> {
                               emulateVerticalOffsetBy:
                                   widget.emulateVerticalOffsetBy,
                               topOffset: widget.topOffset,
-                              bottomOffset: widget.bottomOffset),
+                              bottomOffset: widget.bottomOffset,
+                              nonWorkingTimes: dateNonWorkingTimes,
+                              nonWorkingContainer: widget.nonWorkingContainer),
                         );
                       },
                     ),
@@ -927,4 +940,12 @@ class DayViewState<T extends Object?> extends State<DayView<T>> {
 class DayHeader {
   /// Hide Header Widget
   static Widget hidden(DateTime date) => SizedBox.shrink();
+}
+
+bool isSameDay(DateTime? a, DateTime? b) {
+  if (a == null || b == null) {
+    return false;
+  }
+
+  return a.year == b.year && a.month == b.month && a.day == b.day;
 }

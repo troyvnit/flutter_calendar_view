@@ -2,6 +2,7 @@
 // Use of this source code is governed by a MIT-style license
 // that can be found in the LICENSE file.
 
+import 'non_working_time.dart';
 import 'package:flutter/material.dart';
 
 import '../components/_internal_components.dart';
@@ -12,6 +13,8 @@ import '../event_controller.dart';
 import '../modals.dart';
 import '../painters.dart';
 import '../typedefs.dart';
+
+const int minutesADay = 1440;
 
 /// Defines a single day page.
 class InternalDayViewPage<T extends Object?> extends StatelessWidget {
@@ -121,6 +124,10 @@ class InternalDayViewPage<T extends Object?> extends StatelessWidget {
   /// Defines extra bottom offset
   final double? bottomOffset;
 
+  final List<NonWorkingTime> nonWorkingTimes;
+
+  final Widget? nonWorkingContainer;
+
   /// Defines a single day page.
   const InternalDayViewPage(
       {Key? key,
@@ -156,7 +163,9 @@ class InternalDayViewPage<T extends Object?> extends StatelessWidget {
       required this.quarterHourIndicatorSettings,
       required this.emulateVerticalOffsetBy,
       this.topOffset,
-      this.bottomOffset})
+      this.bottomOffset,
+      this.nonWorkingTimes = const [],
+      this.nonWorkingContainer})
       : super(key: key);
 
   @override
@@ -242,6 +251,47 @@ class InternalDayViewPage<T extends Object?> extends StatelessWidget {
                             date: date,
                             minuteSlotSize: minuteSlotSize,
                           ),
+                          if (nonWorkingTimes.isNotEmpty)
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: SizedBox(
+                                height: height,
+                                width: width -
+                                    timeLineWidth -
+                                    hourIndicatorSettings.offset -
+                                    verticalLineOffset,
+                                child: Stack(
+                                    children: List.generate(
+                                  nonWorkingTimes.length,
+                                  (i) {
+                                    final nonWorkingTime = nonWorkingTimes[i];
+                                    final bottom = height -
+                                        (nonWorkingTime.endTime
+                                                            .getTotalMinutes -
+                                                        (startHour * 60) ==
+                                                    0
+                                                ? minutesADay - (startHour * 60)
+                                                : nonWorkingTime.endTime
+                                                        .getTotalMinutes -
+                                                    (startHour * 60)) *
+                                            heightPerMinute;
+
+                                    final top = (nonWorkingTime
+                                                .startTime.getTotalMinutes -
+                                            (startHour * 60)) *
+                                        heightPerMinute;
+                                    return Positioned(
+                                      top: top,
+                                      bottom: bottom,
+                                      left: 0,
+                                      right: 0,
+                                      child: nonWorkingContainer ??
+                                          const SizedBox(),
+                                    );
+                                  },
+                                )),
+                              ),
+                            ),
                           Align(
                             alignment: Alignment.centerRight,
                             child: EventGenerator<T>(
@@ -303,4 +353,8 @@ class InternalDayViewPage<T extends Object?> extends StatelessWidget {
       ),
     );
   }
+}
+
+extension DateTimeExt on DateTime {
+  int get getTotalMinutes => hour * 60 + minute;
 }
