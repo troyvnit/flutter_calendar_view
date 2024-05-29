@@ -341,6 +341,8 @@ class DayViewState<T extends Object?> extends State<DayView<T>> {
 
   late VoidCallback _reloadCallback;
 
+  final GlobalKey _scrollViewKey = GlobalKey();
+
   final _scrollConfiguration = EventScrollConfiguration<T>();
 
   @override
@@ -364,6 +366,8 @@ class DayViewState<T extends Object?> extends State<DayView<T>> {
     _pageController = PageController(initialPage: _currentIndex);
     _eventArranger = widget.eventArranger ?? SideEventArranger<T>();
     _assignBuilders();
+
+    scrollToCurrentTime();
   }
 
   @override
@@ -428,7 +432,9 @@ class DayViewState<T extends Object?> extends State<DayView<T>> {
   Widget build(BuildContext context) {
     return SafeAreaWrapper(
       option: widget.safeAreaOption,
-      child: LayoutBuilder(builder: (context, constraint) {
+      child: LayoutBuilder(
+          key: _scrollViewKey,
+          builder: (context, constraint) {
         _width = widget.width ?? constraint.maxWidth;
         _updateViewDimensions();
         return SizedBox(
@@ -782,7 +788,7 @@ class DayViewState<T extends Object?> extends State<DayView<T>> {
         _currentIndex = index;
       });
     }
-    animateToDuration(widget.startDuration);
+    animateToDuration(widget.startDuration).then((_) => scrollToCurrentTime());
     widget.onPageChange?.call(_currentDate, _currentIndex);
   }
 
@@ -935,6 +941,33 @@ class DayViewState<T extends Object?> extends State<DayView<T>> {
   /// Returns the current visible date in day view.
   DateTime get currentDate =>
       DateTime(_currentDate.year, _currentDate.month, _currentDate.day);
+
+  void scrollToCurrentTime() {
+    Future.delayed(const Duration(milliseconds: 300), (() {
+      final date = DateTime(_minDate.year, _minDate.month,
+          _minDate.day + (_pageController.page?.toInt() ?? 0));
+      if (isSameDay(date, DateTime.now())) {
+        final currentTimeIndicatorPosition =
+            (TimeOfDay.now().getTotalMinutes * widget.heightPerMinute) -
+                ((widget.startHour ?? 0) * _hourHeight) -
+                (widget.liveTimeIndicatorSettings?.topOffset ?? 0);
+        final double scrollViewPortHeight =
+            scrollController.position.viewportDimension;
+
+        double scrollPixels = currentTimeIndicatorPosition -
+            ((scrollViewPortHeight -
+                    (widget.topOffset ?? 0) -
+                    (widget.bottomOffset ?? 0)) /
+                2);
+        final maxScrollExtent = _scrollController.position.maxScrollExtent;
+        if (scrollPixels + scrollViewPortHeight > maxScrollExtent) {
+          scrollPixels = maxScrollExtent;
+        }
+
+        _scrollController.jumpTo(scrollPixels);
+      }
+    }));
+  }
 }
 
 class DayHeader {
