@@ -341,8 +341,6 @@ class DayViewState<T extends Object?> extends State<DayView<T>> {
 
   late VoidCallback _reloadCallback;
 
-  final GlobalKey _scrollViewKey = GlobalKey();
-
   final _scrollConfiguration = EventScrollConfiguration<T>();
 
   @override
@@ -432,9 +430,7 @@ class DayViewState<T extends Object?> extends State<DayView<T>> {
   Widget build(BuildContext context) {
     return SafeAreaWrapper(
       option: widget.safeAreaOption,
-      child: LayoutBuilder(
-          key: _scrollViewKey,
-          builder: (context, constraint) {
+      child: LayoutBuilder(builder: (context, constraint) {
         _width = widget.width ?? constraint.maxWidth;
         _updateViewDimensions();
         return SizedBox(
