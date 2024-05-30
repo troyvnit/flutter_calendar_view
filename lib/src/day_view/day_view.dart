@@ -947,17 +947,22 @@ class DayViewState<T extends Object?> extends State<DayView<T>> {
             (TimeOfDay.now().getTotalMinutes * widget.heightPerMinute) -
                 ((widget.startHour ?? 0) * _hourHeight) -
                 (widget.liveTimeIndicatorSettings?.topOffset ?? 0);
-        final double scrollViewPortHeight =
-            scrollController.position.viewportDimension;
+
+        final position = scrollController.position;
+        final double scrollViewPortHeight = position.viewportDimension;
 
         double scrollPixels = currentTimeIndicatorPosition -
             ((scrollViewPortHeight -
                     (widget.topOffset ?? 0) -
                     (widget.bottomOffset ?? 0)) /
                 2);
-        final maxScrollExtent = _scrollController.position.maxScrollExtent;
-        if (scrollPixels + scrollViewPortHeight > maxScrollExtent) {
+        final maxScrollExtent = position.maxScrollExtent;
+        if (scrollPixels > maxScrollExtent) {
           scrollPixels = maxScrollExtent;
+        }
+        final minScrollExtent = position.minScrollExtent;
+        if (scrollPixels < minScrollExtent) {
+          scrollPixels = minScrollExtent;
         }
 
         _scrollController.jumpTo(scrollPixels);
