@@ -180,8 +180,11 @@ class _InternalDayViewPageState<T extends Object?>
 
   @override
   void initState() {
+    // Auto scroll to current time after building widget
     SchedulerBinding.instance.addPostFrameCallback((_) {
       scrollToCurrentTime();
+
+      // Auto scroll to current time after every minute
       _timer = Timer.periodic(
         const Duration(minutes: 1),
         (_) => scrollToCurrentTime(),
@@ -193,6 +196,8 @@ class _InternalDayViewPageState<T extends Object?>
 
   @override
   void didChangeDependencies() {
+    // Pre-setting approximate position of current time.
+    // This will help auto scroll to current time faster and slightly
     _scrollController = ScrollController(
       initialScrollOffset: currentTimePosition,
     );
@@ -392,6 +397,7 @@ class _InternalDayViewPageState<T extends Object?>
         MediaQuery.of(context).size.height -
             (widget.topOffset ?? 0) -
             (widget.bottomOffset ?? 0);
+
     final currentTimeIndicatorPosition =
         (TimeOfDay.now().getTotalMinutes * widget.heightPerMinute) -
             (widget.startHour * hourHeight) -
