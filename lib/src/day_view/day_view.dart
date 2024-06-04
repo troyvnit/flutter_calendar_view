@@ -339,6 +339,8 @@ class DayViewState<T extends Object?> extends State<DayView<T>> {
 
   final _scrollConfiguration = EventScrollConfiguration<T>();
 
+  double? currentScrollPostion;
+
   @override
   void initState() {
     super.initState();
@@ -491,7 +493,11 @@ class DayViewState<T extends Object?> extends State<DayView<T>> {
                               topOffset: widget.topOffset,
                               bottomOffset: widget.bottomOffset,
                               nonWorkingTimes: dateNonWorkingTimes,
-                              nonWorkingContainer: widget.nonWorkingContainer),
+                              nonWorkingContainer: widget.nonWorkingContainer,
+                              initialScrollOffset: currentScrollPostion,
+                              onScroll: (pixel) {
+                                setState(() => currentScrollPostion = pixel);
+                              }),
                         );
                       },
                     ),
