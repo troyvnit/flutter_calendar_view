@@ -335,10 +335,6 @@ class DayViewState<T extends Object?> extends State<DayView<T>> {
 
   EventController<T>? _controller;
 
-  late ScrollController _scrollController;
-
-  ScrollController get scrollController => _scrollController;
-
   late VoidCallback _reloadCallback;
 
   final _scrollConfiguration = EventScrollConfiguration<T>();
@@ -358,14 +354,9 @@ class DayViewState<T extends Object?> extends State<DayView<T>> {
     _regulateCurrentDate();
 
     _calculateHeights();
-    _scrollController = ScrollController(
-        initialScrollOffset: widget.scrollOffset ??
-            widget.startDuration.inMinutes * widget.heightPerMinute);
     _pageController = PageController(initialPage: _currentIndex);
     _eventArranger = widget.eventArranger ?? SideEventArranger<T>();
     _assignBuilders();
-
-    scrollToCurrentTime();
   }
 
   @override
@@ -488,7 +479,6 @@ class DayViewState<T extends Object?> extends State<DayView<T>> {
                               minuteSlotSize: widget.minuteSlotSize,
                               scrollNotifier: _scrollConfiguration,
                               fullDayEventBuilder: _fullDayEventBuilder,
-                              scrollController: _scrollController,
                               showHalfHours: widget.showHalfHours,
                               showQuarterHours: widget.showQuarterHours,
                               halfHourIndicatorSettings:
@@ -784,7 +774,8 @@ class DayViewState<T extends Object?> extends State<DayView<T>> {
         _currentIndex = index;
       });
     }
-    animateToDuration(widget.startDuration).then((_) => scrollToCurrentTime());
+
+    // Future.delayed(kTabScrollDuration, scrollToCurrentTime);
     widget.onPageChange?.call(_currentDate, _currentIndex);
   }
 
@@ -901,79 +892,14 @@ class DayViewState<T extends Object?> extends State<DayView<T>> {
     );
   }
 
-  /// Animate to specific offset in a day view using the start duration
-  Future<void> animateToDuration(
-    Duration startDuration, {
-    Duration duration = const Duration(milliseconds: 200),
-    Curve curve = Curves.linear,
-  }) async {
-    final offSetForSingleMinute = _height / 24 / 60;
-    final startDurationInMinutes = startDuration.inMinutes;
-
-    // Added ternary condition below to take care if user passing duration
-    // above 24 hrs then we take it max as 24 hours only
-    final offset = offSetForSingleMinute *
-        (startDurationInMinutes > 3600 ? 3600 : startDurationInMinutes);
-    animateTo(
-      offset.toDouble(),
-      duration: duration,
-      curve: curve,
-    );
-  }
-
-  /// Animate to specific scroll controller offset
-  void animateTo(
-    double offset, {
-    Duration duration = const Duration(milliseconds: 200),
-    Curve curve = Curves.linear,
-  }) {
-    _scrollController.animateTo(
-      offset,
-      duration: duration,
-      curve: curve,
-    );
-  }
-
   /// Returns the current visible date in day view.
   DateTime get currentDate =>
       DateTime(_currentDate.year, _currentDate.month, _currentDate.day);
-
-  void scrollToCurrentTime() {
-    Future.delayed(const Duration(milliseconds: 300), (() {
-      final date = DateTime(_minDate.year, _minDate.month,
-          _minDate.day + (_pageController.page?.toInt() ?? 0));
-      if (isSameDay(date, DateTime.now())) {
-        final currentTimeIndicatorPosition =
-            (TimeOfDay.now().getTotalMinutes * widget.heightPerMinute) -
-                ((widget.startHour ?? 0) * _hourHeight) -
-                (widget.liveTimeIndicatorSettings?.topOffset ?? 0);
-
-        final position = scrollController.position;
-        final double scrollViewPortHeight = position.viewportDimension;
-
-        double scrollPixels = currentTimeIndicatorPosition -
-            ((scrollViewPortHeight -
-                    (widget.topOffset ?? 0) -
-                    (widget.bottomOffset ?? 0)) /
-                2);
-        final maxScrollExtent = position.maxScrollExtent;
-        if (scrollPixels > maxScrollExtent) {
-          scrollPixels = maxScrollExtent;
-        }
-        final minScrollExtent = position.minScrollExtent;
-        if (scrollPixels < minScrollExtent) {
-          scrollPixels = minScrollExtent;
-        }
-
-        _scrollController.jumpTo(scrollPixels);
-      }
-    }));
-  }
 }
 
 class DayHeader {
   /// Hide Header Widget
-  static Widget hidden(DateTime date) => SizedBox.shrink();
+  static Widget hidden(DateTime date) => const SizedBox.shrink();
 }
 
 bool isSameDay(DateTime? a, DateTime? b) {

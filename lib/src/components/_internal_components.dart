@@ -269,25 +269,21 @@ class _TimeLineState extends State<TimeLine> {
     required int hour,
     int minutes = 0,
   }) {
-    return Visibility(
-      visible: !((_currentTime.minute >= 45 && _currentTime.hour == hour - 1) ||
-          (_currentTime.minute <= 15 && _currentTime.hour == hour)),
-      child: Positioned(
-        top: topPosition,
-        left: 0,
-        right: 0,
-        bottom: bottomPosition,
-        child: Container(
-          height: widget.hourHeight,
-          width: widget.timeLineWidth,
-          child: widget.timeLineBuilder.call(
-            DateTime(
-              TimeLine._date.year,
-              TimeLine._date.month,
-              TimeLine._date.day,
-              hour,
-              minutes,
-            ),
+    return Positioned(
+      top: topPosition,
+      left: 0,
+      right: 0,
+      bottom: bottomPosition,
+      child: SizedBox(
+        height: widget.hourHeight,
+        width: widget.timeLineWidth,
+        child: widget.timeLineBuilder.call(
+          DateTime(
+            TimeLine._date.year,
+            TimeLine._date.month,
+            TimeLine._date.day,
+            hour,
+            minutes,
           ),
         ),
       ),
