@@ -377,10 +377,6 @@ class _InternalDayViewPageState<T extends Object?>
               ),
             ),
           ),
-          if (widget.bottomOffset != null)
-            SizedBox.fromSize(
-              size: Size.fromHeight(widget.bottomOffset!),
-            ),
         ],
       ),
     );
