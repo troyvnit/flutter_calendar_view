@@ -2,8 +2,6 @@
 // Use of this source code is governed by a MIT-style license
 // that can be found in the LICENSE file.
 
-import 'package:flutter/scheduler.dart';
-
 import 'non_working_time.dart';
 import 'package:flutter/material.dart';
 
@@ -180,18 +178,6 @@ class InternalDayViewPage<T extends Object?> extends StatefulWidget {
 class _InternalDayViewPageState<T extends Object?>
     extends State<InternalDayViewPage<T>> {
   ScrollController? _scrollController;
-
-  @override
-  void initState() {
-    // Auto scroll to current time after building widget
-
-    if (widget.initialScrollOffset == null) {
-      SchedulerBinding.instance
-          .addPostFrameCallback((_) => scrollToCurrentTime());
-    }
-
-    super.initState();
-  }
 
   @override
   void didChangeDependencies() {
