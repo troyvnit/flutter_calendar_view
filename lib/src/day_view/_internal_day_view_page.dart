@@ -130,6 +130,8 @@ class InternalDayViewPage<T extends Object?> extends StatefulWidget {
 
   final double? initialScrollOffset;
 
+  final double? bottomScrollViewOffset;
+
   /// Defines a single day page.
   const InternalDayViewPage(
       {Key? key,
@@ -168,7 +170,8 @@ class InternalDayViewPage<T extends Object?> extends StatefulWidget {
       this.nonWorkingTimes = const [],
       this.nonWorkingContainer,
       this.onScroll,
-      this.initialScrollOffset})
+      this.initialScrollOffset,
+      this.bottomScrollViewOffset = 0.0})
       : super(key: key);
 
   @override
@@ -215,164 +218,176 @@ class _InternalDayViewPageState<T extends Object?>
               },
               child: SingleChildScrollView(
                 controller: _scrollController,
-                child: SizedBox(
-                  height: widget.height,
-                  width: widget.width,
-                  child: Stack(
-                    children: [
-                      CustomPaint(
-                        size: Size(widget.width, widget.height),
-                        painter: HourLinePainter(
-                            lineColor: widget.hourIndicatorSettings.color,
-                            lineHeight: widget.hourIndicatorSettings.height,
-                            offset: widget.timeLineWidth +
-                                widget.hourIndicatorSettings.offset,
-                            minuteHeight: widget.heightPerMinute,
-                            verticalLineOffset: widget.verticalLineOffset,
-                            showVerticalLine: widget.showVerticalLine,
-                            lineStyle: widget.hourIndicatorSettings.lineStyle,
-                            dashWidth: widget.hourIndicatorSettings.dashWidth,
-                            dashSpaceWidth:
-                                widget.hourIndicatorSettings.dashSpaceWidth,
-                            emulateVerticalOffsetBy:
-                                widget.emulateVerticalOffsetBy,
-                            startHour: widget.startHour),
-                      ),
-                      if (widget.showHalfHours)
-                        CustomPaint(
-                          size: Size(widget.width, widget.height),
-                          painter: HalfHourLinePainter(
-                            lineColor: widget.halfHourIndicatorSettings.color,
-                            lineHeight: widget.halfHourIndicatorSettings.height,
-                            offset: widget.timeLineWidth +
-                                widget.halfHourIndicatorSettings.offset,
-                            minuteHeight: widget.heightPerMinute,
-                            lineStyle:
-                                widget.halfHourIndicatorSettings.lineStyle,
-                            dashWidth:
-                                widget.halfHourIndicatorSettings.dashWidth,
-                            dashSpaceWidth:
-                                widget.halfHourIndicatorSettings.dashSpaceWidth,
-                            startHour: widget.startHour,
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: widget.height,
+                      width: widget.width,
+                      child: Stack(
+                        children: [
+                          CustomPaint(
+                            size: Size(widget.width, widget.height),
+                            painter: HourLinePainter(
+                                lineColor: widget.hourIndicatorSettings.color,
+                                lineHeight: widget.hourIndicatorSettings.height,
+                                offset: widget.timeLineWidth +
+                                    widget.hourIndicatorSettings.offset,
+                                minuteHeight: widget.heightPerMinute,
+                                verticalLineOffset: widget.verticalLineOffset,
+                                showVerticalLine: widget.showVerticalLine,
+                                lineStyle:
+                                    widget.hourIndicatorSettings.lineStyle,
+                                dashWidth:
+                                    widget.hourIndicatorSettings.dashWidth,
+                                dashSpaceWidth:
+                                    widget.hourIndicatorSettings.dashSpaceWidth,
+                                emulateVerticalOffsetBy:
+                                    widget.emulateVerticalOffsetBy,
+                                startHour: widget.startHour),
                           ),
-                        ),
-                      if (widget.showQuarterHours)
-                        CustomPaint(
-                          size: Size(widget.width, widget.height),
-                          painter: QuarterHourLinePainter(
-                            lineColor:
-                                widget.quarterHourIndicatorSettings.color,
-                            lineHeight:
-                                widget.quarterHourIndicatorSettings.height,
-                            offset: widget.timeLineWidth +
-                                widget.quarterHourIndicatorSettings.offset,
-                            minuteHeight: widget.heightPerMinute,
-                            lineStyle:
-                                widget.quarterHourIndicatorSettings.lineStyle,
-                            dashWidth:
-                                widget.quarterHourIndicatorSettings.dashWidth,
-                            dashSpaceWidth: widget
-                                .quarterHourIndicatorSettings.dashSpaceWidth,
-                          ),
-                        ),
-                      widget.dayDetectorBuilder(
-                        width: widget.width,
-                        height: widget.height,
-                        heightPerMinute: widget.heightPerMinute,
-                        date: widget.date,
-                        minuteSlotSize: widget.minuteSlotSize,
-                      ),
-                      if (widget.nonWorkingTimes.isNotEmpty)
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: SizedBox(
-                            height: widget.height,
-                            width: widget.width -
-                                widget.timeLineWidth -
-                                widget.hourIndicatorSettings.offset -
-                                widget.verticalLineOffset,
-                            child: Stack(
-                                children: List.generate(
-                              widget.nonWorkingTimes.length,
-                              (i) {
-                                final nonWorkingTime =
-                                    widget.nonWorkingTimes[i];
-                                final bottom = widget.height -
-                                    (nonWorkingTime.endTime.getTotalMinutes -
-                                                    (widget.startHour * 60) ==
-                                                0
-                                            ? minutesADay -
-                                                (widget.startHour * 60)
-                                            : nonWorkingTime
-                                                    .endTime.getTotalMinutes -
-                                                (widget.startHour * 60)) *
-                                        widget.heightPerMinute;
-
-                                final top =
-                                    (nonWorkingTime.startTime.getTotalMinutes -
-                                            (widget.startHour * 60)) *
-                                        widget.heightPerMinute;
-                                return Positioned(
-                                  top: top,
-                                  bottom: bottom,
-                                  left: 0,
-                                  right: 0,
-                                  child: widget.nonWorkingContainer ??
-                                      const SizedBox(),
-                                );
-                              },
-                            )),
-                          ),
-                        ),
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: EventGenerator<T>(
-                          height: widget.height,
-                          date: widget.date,
-                          onTileTap: widget.onTileTap,
-                          eventArranger: widget.eventArranger,
-                          events: widget.controller.getEventsOnDay(
-                            widget.date,
-                            includeFullDayEvents: false,
-                          ),
-                          heightPerMinute: widget.heightPerMinute,
-                          eventTileBuilder: widget.eventTileBuilder,
-                          scrollNotifier: widget.scrollNotifier,
-                          startHour: widget.startHour,
-                          width: widget.width -
-                              widget.timeLineWidth -
-                              widget.hourIndicatorSettings.offset -
-                              widget.verticalLineOffset,
-                        ),
-                      ),
-                      TimeLine(
-                        height: widget.height,
-                        hourHeight: widget.hourHeight,
-                        timeLineBuilder: widget.timeLineBuilder,
-                        timeLineOffset: widget.timeLineOffset,
-                        timeLineWidth: widget.timeLineWidth,
-                        showHalfHours: widget.showHalfHours,
-                        startHour: widget.startHour,
-                        showQuarterHours: widget.showQuarterHours,
-                        key: ValueKey(widget.heightPerMinute),
-                        liveTimeIndicatorSettings:
-                            widget.liveTimeIndicatorSettings,
-                      ),
-                      if (widget.showLiveLine &&
-                          widget.liveTimeIndicatorSettings.height > 0)
-                        IgnorePointer(
-                          child: LiveTimeIndicator(
-                            liveTimeIndicatorSettings:
-                                widget.liveTimeIndicatorSettings,
+                          if (widget.showHalfHours)
+                            CustomPaint(
+                              size: Size(widget.width, widget.height),
+                              painter: HalfHourLinePainter(
+                                lineColor:
+                                    widget.halfHourIndicatorSettings.color,
+                                lineHeight:
+                                    widget.halfHourIndicatorSettings.height,
+                                offset: widget.timeLineWidth +
+                                    widget.halfHourIndicatorSettings.offset,
+                                minuteHeight: widget.heightPerMinute,
+                                lineStyle:
+                                    widget.halfHourIndicatorSettings.lineStyle,
+                                dashWidth:
+                                    widget.halfHourIndicatorSettings.dashWidth,
+                                dashSpaceWidth: widget
+                                    .halfHourIndicatorSettings.dashSpaceWidth,
+                                startHour: widget.startHour,
+                              ),
+                            ),
+                          if (widget.showQuarterHours)
+                            CustomPaint(
+                              size: Size(widget.width, widget.height),
+                              painter: QuarterHourLinePainter(
+                                lineColor:
+                                    widget.quarterHourIndicatorSettings.color,
+                                lineHeight:
+                                    widget.quarterHourIndicatorSettings.height,
+                                offset: widget.timeLineWidth +
+                                    widget.quarterHourIndicatorSettings.offset,
+                                minuteHeight: widget.heightPerMinute,
+                                lineStyle: widget
+                                    .quarterHourIndicatorSettings.lineStyle,
+                                dashWidth: widget
+                                    .quarterHourIndicatorSettings.dashWidth,
+                                dashSpaceWidth: widget
+                                    .quarterHourIndicatorSettings
+                                    .dashSpaceWidth,
+                              ),
+                            ),
+                          widget.dayDetectorBuilder(
                             width: widget.width,
                             height: widget.height,
                             heightPerMinute: widget.heightPerMinute,
-                            timeLineWidth: widget.timeLineWidth,
-                            startHour: widget.startHour,
+                            date: widget.date,
+                            minuteSlotSize: widget.minuteSlotSize,
                           ),
-                        ),
-                    ],
-                  ),
+                          if (widget.nonWorkingTimes.isNotEmpty)
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: SizedBox(
+                                height: widget.height,
+                                width: widget.width -
+                                    widget.timeLineWidth -
+                                    widget.hourIndicatorSettings.offset -
+                                    widget.verticalLineOffset,
+                                child: Stack(
+                                    children: List.generate(
+                                  widget.nonWorkingTimes.length,
+                                  (i) {
+                                    final nonWorkingTime =
+                                        widget.nonWorkingTimes[i];
+                                    final bottom = widget.height -
+                                        (nonWorkingTime.endTime
+                                                            .getTotalMinutes -
+                                                        (widget.startHour *
+                                                            60) ==
+                                                    0
+                                                ? minutesADay -
+                                                    (widget.startHour * 60)
+                                                : nonWorkingTime.endTime
+                                                        .getTotalMinutes -
+                                                    (widget.startHour * 60)) *
+                                            widget.heightPerMinute;
+
+                                    final top = (nonWorkingTime
+                                                .startTime.getTotalMinutes -
+                                            (widget.startHour * 60)) *
+                                        widget.heightPerMinute;
+                                    return Positioned(
+                                      top: top,
+                                      bottom: bottom,
+                                      left: 0,
+                                      right: 0,
+                                      child: widget.nonWorkingContainer ??
+                                          const SizedBox(),
+                                    );
+                                  },
+                                )),
+                              ),
+                            ),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: EventGenerator<T>(
+                              height: widget.height,
+                              date: widget.date,
+                              onTileTap: widget.onTileTap,
+                              eventArranger: widget.eventArranger,
+                              events: widget.controller.getEventsOnDay(
+                                widget.date,
+                                includeFullDayEvents: false,
+                              ),
+                              heightPerMinute: widget.heightPerMinute,
+                              eventTileBuilder: widget.eventTileBuilder,
+                              scrollNotifier: widget.scrollNotifier,
+                              startHour: widget.startHour,
+                              width: widget.width -
+                                  widget.timeLineWidth -
+                                  widget.hourIndicatorSettings.offset -
+                                  widget.verticalLineOffset,
+                            ),
+                          ),
+                          TimeLine(
+                            height: widget.height,
+                            hourHeight: widget.hourHeight,
+                            timeLineBuilder: widget.timeLineBuilder,
+                            timeLineOffset: widget.timeLineOffset,
+                            timeLineWidth: widget.timeLineWidth,
+                            showHalfHours: widget.showHalfHours,
+                            startHour: widget.startHour,
+                            showQuarterHours: widget.showQuarterHours,
+                            key: ValueKey(widget.heightPerMinute),
+                            liveTimeIndicatorSettings:
+                                widget.liveTimeIndicatorSettings,
+                          ),
+                          if (widget.showLiveLine &&
+                              widget.liveTimeIndicatorSettings.height > 0)
+                            IgnorePointer(
+                              child: LiveTimeIndicator(
+                                liveTimeIndicatorSettings:
+                                    widget.liveTimeIndicatorSettings,
+                                width: widget.width,
+                                height: widget.height,
+                                heightPerMinute: widget.heightPerMinute,
+                                timeLineWidth: widget.timeLineWidth,
+                                startHour: widget.startHour,
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: widget.bottomScrollViewOffset),
+                  ],
                 ),
               ),
             ),
