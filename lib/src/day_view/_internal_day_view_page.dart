@@ -241,8 +241,6 @@ class _InternalDayViewPageState<T extends Object?>
                                     widget.hourIndicatorSettings.dashWidth,
                                 dashSpaceWidth:
                                     widget.hourIndicatorSettings.dashSpaceWidth,
-                                emulateVerticalOffsetBy:
-                                    widget.emulateVerticalOffsetBy,
                                 startHour: widget.startHour),
                           ),
                           if (widget.showHalfHours)
