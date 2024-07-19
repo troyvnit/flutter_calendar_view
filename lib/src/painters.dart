@@ -129,6 +129,9 @@ class HalfHourLinePainter extends CustomPainter {
   /// First hour displayed in the layout
   final int startHour;
 
+  /// Emulates offset of vertical line from half hour line starts.
+  final double emulateVerticalOffsetBy;
+
   /// Paint half hour lines
   HalfHourLinePainter({
     required this.lineColor,
@@ -137,12 +140,14 @@ class HalfHourLinePainter extends CustomPainter {
     required this.minuteHeight,
     required this.lineStyle,
     required this.startHour,
+    required this.emulateVerticalOffsetBy,
     this.dashWidth = 4,
     this.dashSpaceWidth = 4,
   });
 
   @override
   void paint(Canvas canvas, Size size) {
+    final dx = offset + emulateVerticalOffsetBy;
     final paint = Paint()
       ..color = lineColor
       ..strokeWidth = lineHeight;
@@ -150,14 +155,14 @@ class HalfHourLinePainter extends CustomPainter {
     for (var i = startHour; i < Constants.hoursADay; i++) {
       final dy = (i - startHour) * minuteHeight * 60 + (minuteHeight * 30);
       if (lineStyle == LineStyle.dashed) {
-        var startX = offset;
+        var startX = dx;
         while (startX < size.width) {
           canvas.drawLine(
               Offset(startX, dy), Offset(startX + dashWidth, dy), paint);
           startX += dashWidth + dashSpaceWidth;
         }
       } else {
-        canvas.drawLine(Offset(offset, dy), Offset(size.width, dy), paint);
+        canvas.drawLine(Offset(dx, dy), Offset(size.width, dy), paint);
       }
     }
   }
