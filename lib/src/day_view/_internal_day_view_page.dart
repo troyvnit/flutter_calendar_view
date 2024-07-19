@@ -113,7 +113,7 @@ class InternalDayViewPage<T extends Object?> extends StatefulWidget {
   /// Settings for half hour indicator lines.
   final HourIndicatorSettings quarterHourIndicatorSettings;
 
-  /// Emulate vertical line offset from hour line starts.
+  /// Emulate vertical line offset from hour/half hour line starts.
   final double emulateVerticalOffsetBy;
 
   /// Defines extra top offset
@@ -263,6 +263,8 @@ class _InternalDayViewPageState<T extends Object?>
                                 dashSpaceWidth: widget
                                     .halfHourIndicatorSettings.dashSpaceWidth,
                                 startHour: widget.startHour,
+                                emulateVerticalOffsetBy:
+                                    widget.emulateVerticalOffsetBy,
                               ),
                             ),
                           if (widget.showQuarterHours)
