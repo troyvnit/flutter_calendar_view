@@ -50,7 +50,7 @@ class HourLinePainter extends CustomPainter {
     required this.offset,
     required this.showVerticalLine,
     required this.startHour,
-    required this.emulateVerticalOffsetBy,
+    this.emulateVerticalOffsetBy = 0,
     this.verticalLineOffset = 10,
     this.lineStyle = LineStyle.solid,
     this.dashWidth = 4,
