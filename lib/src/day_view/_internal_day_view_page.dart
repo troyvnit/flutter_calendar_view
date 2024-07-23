@@ -285,13 +285,6 @@ class _InternalDayViewPageState<T extends Object?>
                                     .dashSpaceWidth,
                               ),
                             ),
-                          widget.dayDetectorBuilder(
-                            width: widget.width,
-                            height: widget.height,
-                            heightPerMinute: widget.heightPerMinute,
-                            date: widget.date,
-                            minuteSlotSize: widget.minuteSlotSize,
-                          ),
                           if (widget.nonWorkingTimes.isNotEmpty)
                             Align(
                               alignment: Alignment.centerRight,
@@ -336,6 +329,13 @@ class _InternalDayViewPageState<T extends Object?>
                                 )),
                               ),
                             ),
+                          widget.dayDetectorBuilder(
+                            width: widget.width,
+                            height: widget.height,
+                            heightPerMinute: widget.heightPerMinute,
+                            date: widget.date,
+                            minuteSlotSize: widget.minuteSlotSize,
+                          ),
                           Align(
                             alignment: Alignment.centerRight,
                             child: EventGenerator<T>(
