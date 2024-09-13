@@ -231,6 +231,8 @@ class DayView<T extends Object?> extends StatefulWidget {
 
   final double? bottomScrollViewOffset;
 
+  final VoidCallback? onPullDownToRefresh;
+
   /// Main widget for day view.
   const DayView(
       {Key? key,
@@ -281,7 +283,8 @@ class DayView<T extends Object?> extends StatefulWidget {
       this.bottomOffset,
       this.nonWorkingTimes = const [],
       this.nonWorkingContainer,
-      this.bottomScrollViewOffset = 0.0})
+      this.bottomScrollViewOffset = 0.0,
+      this.onPullDownToRefresh})
       : assert(!(onHeaderTitleTap != null && dayTitleBuilder != null),
             "can't use [onHeaderTitleTap] & [dayTitleBuilder] simultaneously"),
         assert(timeLineOffset >= 0,
@@ -501,7 +504,8 @@ class DayViewState<T extends Object?> extends State<DayView<T>> {
                               bottomScrollViewOffset:
                                   widget.bottomScrollViewOffset,
                               onScroll: (pixel) =>
-                                  setState(() => currentScrollPostion = pixel)),
+                                  setState(() => currentScrollPostion = pixel),
+                              onPullDownToRefresh: widget.onPullDownToRefresh),
                         );
                       },
                     ),
