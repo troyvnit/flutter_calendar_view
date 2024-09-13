@@ -128,6 +128,8 @@ class InternalDayViewPage<T extends Object?> extends StatefulWidget {
 
   final Function(double?)? onScroll;
 
+  final VoidCallback? onPullDownToRefresh;
+
   final double? initialScrollOffset;
 
   final double? bottomScrollViewOffset;
@@ -170,6 +172,7 @@ class InternalDayViewPage<T extends Object?> extends StatefulWidget {
       this.nonWorkingTimes = const [],
       this.nonWorkingContainer,
       this.onScroll,
+      this.onPullDownToRefresh,
       this.initialScrollOffset,
       this.bottomScrollViewOffset = 0.0})
       : super(key: key);
@@ -212,7 +215,11 @@ class _InternalDayViewPageState<T extends Object?>
             child: NotificationListener<ScrollNotification>(
               onNotification: (scrollNotification) {
                 if (scrollNotification is ScrollEndNotification) {
-                  widget.onScroll?.call(_scrollController?.position.pixels);
+                  final pixels = _scrollController?.position.pixels ?? 0;
+                  widget.onScroll?.call(pixels);
+                  if (scrollNotification.metrics.atEdge && pixels <= 0) {
+                    widget.onPullDownToRefresh?.call();
+                  }
                 }
                 return true;
               },
