@@ -4,6 +4,7 @@
 
 import 'dart:async';
 
+import '../utils/time_zone_utils.dart';
 import 'package:flutter/material.dart';
 
 import '../calendar_event_data.dart';
@@ -37,6 +38,8 @@ class LiveTimeIndicator extends StatefulWidget {
 
   final int startHour;
 
+  final DateTime Function()? getNowInUserTimeZone;
+
   /// Widget to display tile line according to current time.
   const LiveTimeIndicator(
       {Key? key,
@@ -45,7 +48,8 @@ class LiveTimeIndicator extends StatefulWidget {
       required this.timeLineWidth,
       required this.liveTimeIndicatorSettings,
       required this.heightPerMinute,
-      required this.startHour})
+      required this.startHour,
+      this.getNowInUserTimeZone})
       : super(key: key);
 
   @override
@@ -54,7 +58,8 @@ class LiveTimeIndicator extends StatefulWidget {
 
 class _LiveTimeIndicatorState extends State<LiveTimeIndicator> {
   late Timer _timer;
-  late TimeOfDay _currentTime = TimeOfDay.now();
+  late TimeOfDay _currentTime =
+      TimeZoneUtils.getTimeOfDayInUserTimeZone(widget.getNowInUserTimeZone);
 
   @override
   void initState() {
@@ -73,7 +78,8 @@ class _LiveTimeIndicatorState extends State<LiveTimeIndicator> {
   /// This will rebuild TimeLineIndicator every second. This will allow us
   /// to indicate live time in Week and Day view.
   void _onTick(Timer? timer) {
-    final time = TimeOfDay.now();
+    final time =
+        TimeZoneUtils.getTimeOfDayInUserTimeZone(widget.getNowInUserTimeZone);
     if (time != _currentTime && mounted) {
       _currentTime = time;
       setState(() {});
@@ -86,7 +92,7 @@ class _LiveTimeIndicatorState extends State<LiveTimeIndicator> {
     final currentMinute = _currentTime.minute.appendLeadingZero();
     final currentPeriod = _currentTime.period.name;
     final timeString = widget.liveTimeIndicatorSettings.timeStringBuilder
-            ?.call(DateTime.now()) ??
+            ?.call(widget.getNowInUserTimeZone?.call() ?? DateTime.now()) ??
         '$currentHour:$currentMinute $currentPeriod';
     return CustomPaint(
       size: Size(widget.width, widget.liveTimeIndicatorSettings.height),
@@ -146,9 +152,9 @@ class TimeLine extends StatefulWidget {
   /// height of indicator and also allow to show time with custom format.
   final LiveTimeIndicatorSettings liveTimeIndicatorSettings;
 
-  static DateTime get _date => DateTime.now();
-
   double get _halfHourHeight => hourHeight / 2;
+
+  final DateTime Function()? getNowInUserTimeZone;
 
   /// Time line to display time at left side of day or week view.
   const TimeLine({
@@ -161,6 +167,7 @@ class TimeLine extends StatefulWidget {
     required this.startHour,
     this.showHalfHours = false,
     this.showQuarterHours = false,
+    this.getNowInUserTimeZone,
     required this.liveTimeIndicatorSettings,
   }) : super(key: key);
 
@@ -170,7 +177,10 @@ class TimeLine extends StatefulWidget {
 
 class _TimeLineState extends State<TimeLine> {
   late Timer _timer;
-  late TimeOfDay _currentTime = TimeOfDay.now();
+  late TimeOfDay _currentTime =
+      TimeZoneUtils.getTimeOfDayInUserTimeZone(widget.getNowInUserTimeZone);
+
+  DateTime get _date => widget.getNowInUserTimeZone?.call() ?? DateTime.now();
 
   @override
   void initState() {
@@ -189,7 +199,8 @@ class _TimeLineState extends State<TimeLine> {
   /// to show/hide time line when there is overlap with
   /// live time line indicator in Week and Day view.
   void _onTick(Timer? timer) {
-    final time = TimeOfDay.now();
+    final time =
+        TimeZoneUtils.getTimeOfDayInUserTimeZone(widget.getNowInUserTimeZone);
     if (time != _currentTime && mounted) {
       _currentTime = time;
       setState(() {});
@@ -279,9 +290,9 @@ class _TimeLineState extends State<TimeLine> {
         width: widget.timeLineWidth,
         child: widget.timeLineBuilder.call(
           DateTime(
-            TimeLine._date.year,
-            TimeLine._date.month,
-            TimeLine._date.day,
+            _date.year,
+            _date.month,
+            _date.day,
             hour,
             minutes,
           ),

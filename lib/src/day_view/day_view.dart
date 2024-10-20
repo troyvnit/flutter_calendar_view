@@ -233,6 +233,8 @@ class DayView<T extends Object?> extends StatefulWidget {
 
   final VoidCallback? onPullDownToRefresh;
 
+  final DateTime Function()? getNowInUserTimeZone;
+
   /// Main widget for day view.
   const DayView(
       {Key? key,
@@ -284,7 +286,8 @@ class DayView<T extends Object?> extends StatefulWidget {
       this.nonWorkingTimes = const [],
       this.nonWorkingContainer,
       this.bottomScrollViewOffset = 0.0,
-      this.onPullDownToRefresh})
+      this.onPullDownToRefresh,
+      this.getNowInUserTimeZone})
       : assert(!(onHeaderTitleTap != null && dayTitleBuilder != null),
             "can't use [onHeaderTitleTap] & [dayTitleBuilder] simultaneously"),
         assert(timeLineOffset >= 0,
@@ -357,7 +360,10 @@ class DayViewState<T extends Object?> extends State<DayView<T>> {
     _reloadCallback = _reload;
     _setDateRange();
 
-    _currentDate = (widget.initialDay ?? DateTime.now()).withoutTime;
+    _currentDate = (widget.initialDay ??
+            widget.getNowInUserTimeZone?.call() ??
+            DateTime.now())
+        .withoutTime;
 
     _regulateCurrentDate();
 
@@ -475,7 +481,9 @@ class DayViewState<T extends Object?> extends State<DayView<T>> {
                               onDateLongPress: widget.onDateLongPress,
                               onDateTap: widget.onDateTap,
                               showLiveLine: widget.showLiveTimeLineInAllDays ||
-                                  date.compareWithoutTime(DateTime.now()),
+                                  date.compareWithoutTime(
+                                      widget.getNowInUserTimeZone?.call() ??
+                                          DateTime.now()),
                               timeLineOffset: widget.timeLineOffset,
                               timeLineWidth: _timeLineWidth,
                               verticalLineOffset: widget.verticalLineOffset,
@@ -505,7 +513,9 @@ class DayViewState<T extends Object?> extends State<DayView<T>> {
                                   widget.bottomScrollViewOffset,
                               onScroll: (pixel) =>
                                   setState(() => currentScrollPostion = pixel),
-                              onPullDownToRefresh: widget.onPullDownToRefresh),
+                              onPullDownToRefresh: widget.onPullDownToRefresh,
+                              getNowInUserTimeZone:
+                                  widget.getNowInUserTimeZone),
                         );
                       },
                     ),

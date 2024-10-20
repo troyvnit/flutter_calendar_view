@@ -2,6 +2,8 @@
 // Use of this source code is governed by a MIT-style license
 // that can be found in the LICENSE file.
 
+import '../utils/time_zone_utils.dart';
+
 import 'non_working_time.dart';
 import 'package:flutter/material.dart';
 
@@ -134,6 +136,8 @@ class InternalDayViewPage<T extends Object?> extends StatefulWidget {
 
   final double? bottomScrollViewOffset;
 
+  final DateTime Function()? getNowInUserTimeZone;
+
   /// Defines a single day page.
   const InternalDayViewPage(
       {Key? key,
@@ -174,7 +178,8 @@ class InternalDayViewPage<T extends Object?> extends StatefulWidget {
       this.onScroll,
       this.onPullDownToRefresh,
       this.initialScrollOffset,
-      this.bottomScrollViewOffset = 0.0})
+      this.bottomScrollViewOffset = 0.0,
+      this.getNowInUserTimeZone})
       : super(key: key);
 
   @override
@@ -376,6 +381,7 @@ class _InternalDayViewPageState<T extends Object?>
                             key: ValueKey(widget.heightPerMinute),
                             liveTimeIndicatorSettings:
                                 widget.liveTimeIndicatorSettings,
+                            getNowInUserTimeZone: widget.getNowInUserTimeZone,
                           ),
                           if (widget.showLiveLine &&
                               widget.liveTimeIndicatorSettings.height > 0)
@@ -388,6 +394,8 @@ class _InternalDayViewPageState<T extends Object?>
                                 heightPerMinute: widget.heightPerMinute,
                                 timeLineWidth: widget.timeLineWidth,
                                 startHour: widget.startHour,
+                                getNowInUserTimeZone:
+                                    widget.getNowInUserTimeZone,
                               ),
                             ),
                         ],
@@ -415,7 +423,9 @@ class _InternalDayViewPageState<T extends Object?>
             (widget.bottomOffset ?? 0);
 
     final currentTimeIndicatorPosition =
-        (TimeOfDay.now().getTotalMinutes * widget.heightPerMinute) -
+        (TimeZoneUtils.getTimeOfDayInUserTimeZone(widget.getNowInUserTimeZone)
+                    .getTotalMinutes *
+                widget.heightPerMinute) -
             (widget.startHour * hourHeight) -
             widget.liveTimeIndicatorSettings.topOffset;
     double scrollPixels =
