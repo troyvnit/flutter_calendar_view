@@ -209,13 +209,11 @@ class _InternalDayViewPageState<T extends Object?>
       width: widget.width,
       child: Column(
         children: [
-          fullDayEventList.isEmpty
-              ? SizedBox.shrink()
-              : widget.fullDayEventBuilder(fullDayEventList, widget.date),
           if (widget.topOffset != null)
             SizedBox.fromSize(
               size: Size.fromHeight(widget.topOffset!),
             ),
+          widget.fullDayEventBuilder(fullDayEventList, widget.date),
           Expanded(
             child: NotificationListener<ScrollNotification>(
               onNotification: (scrollNotification) {
